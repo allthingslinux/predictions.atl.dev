@@ -33,6 +33,17 @@
   const values = discordStats.data?.map((d) => d.value) || [];
   const maxValue = Math.max(...values, 0);
   const minValue = Math.min(...values, 0);
+
+  // Calculate historical period in days (dynamically)
+  const historicalPeriod =
+    discordStats.data.length > 1
+      ? Math.ceil(
+          (discordStats.data[discordStats.data.length - 1].date.getTime() -
+            discordStats.data[0].date.getTime()) /
+            (24 * 60 * 60 * 1000)
+        )
+      : 0;
+
   $: predictions = discordStats.predictions?.predictions || [];
   $: modelFit = discordStats.predictions?.modelFit || { rSquared: 0 };
   $: growthRate = discordStats.predictions?.dailyGrowthRate || 0;
@@ -124,7 +135,7 @@
           plugins: {
             title: {
               display: true,
-              text: 'Historical Data (All Time)',
+              text: `Historical Data (${historicalPeriod} Days)`,
               font: { size: 18, weight: 'bold' }
             },
             legend: { display: true },
@@ -347,9 +358,12 @@
         <div>
           <h3 class="mb-2 text-base font-semibold text-gray-700">Current Status</h3>
           <p class="text-base">
-            Current: <span class="font-bold"
+            Current Users: <span class="font-bold"
               >{discordStats.data[discordStats.data.length - 1].value}</span
             >
+          </p>
+          <p class="text-base">
+            Historical Period: <span class="font-bold">{historicalPeriod} days</span>
           </p>
           <p class="text-base">
             Data Points: <span class="font-bold">{discordStats.data.length} measurements</span>
