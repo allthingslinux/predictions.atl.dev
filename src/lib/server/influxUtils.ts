@@ -6,11 +6,13 @@ export async function influxDBRequest(): Promise<string> {
     const url = `${INFLUX_URL}/api/v2/query?orgID=${INFLUX_ORG_ID}`;
 
     // Fixed Flux query for Discord guild total users
+    // Gets all data points, if we have this for longer than 1000 days god help us
     const fluxQuery = `from(bucket: "stats-backend")
-  |> range(start: -30d, stop: now())
+  |> range(start: -1000d, stop: now())
   |> filter(fn: (r) =>
     r._measurement == "discord_metrics" and
-    r._field == "guild_total_users"
+    r._field == "guild_total_users" and
+    r.server == "1172245377395728464"
   )`;
 
     const response = await fetch(url, {
