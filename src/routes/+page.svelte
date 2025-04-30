@@ -124,7 +124,7 @@
           plugins: {
             title: {
               display: true,
-              text: 'Historical Data (7 Days)',
+              text: 'Historical Data (30 Days)',
               font: { size: 18, weight: 'bold' }
             },
             legend: { display: true },
@@ -352,7 +352,7 @@
             >
           </p>
           <p class="text-base">
-            Past 7 days: <span class="font-bold">{discordStats.data.length} measurements</span>
+            Past 30 days: <span class="font-bold">{discordStats.data.length} measurements</span>
           </p>
           <p class="text-base">
             Peak: <span class="font-bold">{maxValue}</span>
