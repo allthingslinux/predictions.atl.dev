@@ -295,7 +295,9 @@
       </div>
       <div class="rounded bg-yellow-50 p-4 shadow">
         <h3 class="text-xs font-semibold text-yellow-500 uppercase">Milestones</h3>
-        <p class="text-2xl font-bold">{milestones.length} milestone{milestones.length > 1 ? 's' : ''}</p>
+        <p class="text-2xl font-bold">
+          {milestones.length} milestone{milestones.length > 1 ? 's' : ''}
+        </p>
       </div>
       {#if milestoneDates.length > 0}
         <div class="rounded bg-orange-50 p-4 shadow">
