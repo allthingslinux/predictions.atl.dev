@@ -404,10 +404,10 @@
     <!-- Small methodology note -->
     <div class="text-sm text-gray-500">
       Sponsored by accuratelinuxgraphs.<br />
-      *Based on linear regression (R²: {formatPercent(modelFit.rSquared)}). accuratelinuxgraphs does
+      *Based on weighted log-linear regression (R²: {formatPercent(modelFit.rSquared)}). accuratelinuxgraphs does
       not guarantee 100% accuracy or even 50% accuracy due to external factors affecting Discord
-      user growth.<br />TLDR: Not our fault if this is wrong. If it is, thats your fucking fault for
-      not understanding this.
+      user growth.<br />TLDR: Not our fault if this is wrong. If you still think its our fault, thats something you can
+      learn to grow on! Sparkle on!
     </div>
   {/if}
 </div>
