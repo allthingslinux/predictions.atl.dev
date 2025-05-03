@@ -24,36 +24,40 @@ export function linearRegression(data: { date: Date; value: number }[]) {
     // Apply squared weight: (i + 1)^2
     const weight = Math.pow(i + 1, 2);
 
-     // Duplicate the log point based on its weight
-     for (let j = 0; j < weight; j++) {
-       if (weightedLogPoints.length > 1000000) { // Safety limit
-           console.warn("Weighted points array growing too large, stopping duplication for this point.");
-           break;
-       }
-       weightedLogPoints.push([xArray[i], logYArray[i]]);
-     }
+    // Duplicate the log point based on its weight
+    for (let j = 0; j < weight; j++) {
+      if (weightedLogPoints.length > 1000000) {
+        // Safety limit
+        console.warn(
+          'Weighted points array growing too large, stopping duplication for this point.'
+        );
+        break;
+      }
+      weightedLogPoints.push([xArray[i], logYArray[i]]);
+    }
   }
-
 
   // --- Perform linear regression on WEIGHTED log-transformed data ---
   let regression, slope, intercept, predictLogFn, rSquaredValue;
 
   if (weightedLogPoints.length > 1000000 || weightedLogPoints.length === 0) {
-      console.warn("Weighted points exceed limit or is empty, falling back to unweighted log-linear regression.");
-      // Fallback to unweighted
-      regression = ssLinearRegression(originalLogPoints);
-      slope = regression.m;
-      intercept = regression.b;
-      predictLogFn = linearRegressionLine(regression);
-      rSquaredValue = rSquared(originalLogPoints, predictLogFn);
+    console.warn(
+      'Weighted points exceed limit or is empty, falling back to unweighted log-linear regression.'
+    );
+    // Fallback to unweighted
+    regression = ssLinearRegression(originalLogPoints);
+    slope = regression.m;
+    intercept = regression.b;
+    predictLogFn = linearRegressionLine(regression);
+    rSquaredValue = rSquared(originalLogPoints, predictLogFn);
   } else {
-      // Use weighted points
-      regression = ssLinearRegression(weightedLogPoints);
-      slope = regression.m;
-      intercept = regression.b;
-      predictLogFn = linearRegressionLine(regression);
-      // Calculate R-squared based on how well the WEIGHTED model predicts the ORIGINAL log points
-      rSquaredValue = rSquared(originalLogPoints, predictLogFn);
+    // Use weighted points
+    regression = ssLinearRegression(weightedLogPoints);
+    slope = regression.m;
+    intercept = regression.b;
+    predictLogFn = linearRegressionLine(regression);
+    // Calculate R-squared based on how well the WEIGHTED model predicts the ORIGINAL log points
+    rSquaredValue = rSquared(originalLogPoints, predictLogFn);
   }
 
   // Ensure R-squared is within valid range [0, 1]
@@ -63,20 +67,27 @@ export function linearRegression(data: { date: Date; value: number }[]) {
   const lastActualValue = yArray[dataLength - 1];
   const lastTimestamp = xArray[dataLength - 1];
 
-  return createModelResult(slope, intercept, finalRSquared, predictLogFn, xArray, lastTimestamp, lastActualValue);
+  return createModelResult(
+    slope,
+    intercept,
+    finalRSquared,
+    predictLogFn,
+    xArray,
+    lastTimestamp,
+    lastActualValue
+  );
 }
 
 // Helper function to create the return object, now includes offset calculation
 function createModelResult(
-    slope: number,
-    intercept: number,
-    rSquared: number,
-    predictLogFn: (x: number) => number,
-    xArray: number[],
-    lastTimestamp: number,
-    lastActualValue: number
+  slope: number,
+  intercept: number,
+  rSquared: number,
+  predictLogFn: (x: number) => number,
+  xArray: number[],
+  lastTimestamp: number,
+  lastActualValue: number
 ) {
-
   // Calculate the model's prediction (in original scale) at the exact time of the last data point
   const logPredictionAtLastTimestamp = predictLogFn(lastTimestamp);
   const modelPredictionAtLastTimestamp = Math.exp(logPredictionAtLastTimestamp);
@@ -84,7 +95,7 @@ function createModelResult(
   // Calculate the offset needed to match the last actual value
   const offset = lastActualValue - modelPredictionAtLastTimestamp;
 
- return {
+  return {
     slope: slope,
     intercept: intercept,
     rSquared: rSquared,
@@ -118,7 +129,6 @@ function createModelResult(
     }
   };
 }
-
 
 // predictDiscordGrowth remains the same, growth rate is based on slope before offset
 export function predictDiscordGrowth(data: { date: Date; value: number }[], daysToPredict = 30) {
