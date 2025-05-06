@@ -405,6 +405,16 @@
       </div>
     </div>
 
+    <!-- API Endpoints Schema -->
+    <div class="mb-6 rounded-lg bg-gray-50 p-5 shadow">
+      <h2 class="mb-2 text-xl font-bold">API Endpoints</h2>
+      <ul class="list-disc list-inside text-sm text-gray-700">
+        <li><code>GET /api/members</code>: &#123; success: boolean, data: Array&#60;&#123; date: string, value: number &#125;&#62; &#125;</li>
+        <li><code>GET /api/predictions?days=&lt;number&gt;</code>: &#123; success: boolean, currentUsers: number, predictions: Array&#60;&#123; date: string, value: number &#125;&#62;, modelFit: &#123; rSquared: number, slope: number, intercept: number &#125;, dailyGrowthRate: number &#125;</li>
+        <li><code>GET /api/info</code>: &#123; success: boolean, data: &#123; message: string, timestamp: string &#125; &#125;</li>
+      </ul>
+    </div>
+
     <!-- Small methodology note -->
     <div class="text-sm text-gray-500">
       Sponsored by accuratelinuxgraphs.<br />
