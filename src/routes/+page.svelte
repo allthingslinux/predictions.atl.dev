@@ -103,10 +103,14 @@
         milestones = [];
       }
 
-      const maxMilestone = Math.ceil(maxValue / 1000) * 1000;
-      const milestone = maxMilestone + 1000;
-      if (!milestones.some((m) => m.num === milestone)) {
-        milestones.push({ title: `${milestone}`, num: milestone });
+      // Generate milestones at every 1000 interval until predictions end
+      const currentValue = discordStats.data[discordStats.data.length - 1].value;
+      const predictedMaxValue = predictions[predictions.length - 1]?.value || currentValue;
+      const start = Math.ceil(currentValue / 1000) * 1000;
+      for (let n = start; n <= predictedMaxValue; n += 1000) {
+        if (!milestones.some((m) => m.num === n)) {
+          milestones.push({ title: `${n}`, num: n });
+        }
       }
 
       if (!discordStats.success || discordStats.data.length === 0) return;
