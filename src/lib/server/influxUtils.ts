@@ -8,7 +8,7 @@ export async function influxDBRequest(): Promise<string> {
     // Fixed Flux query for Discord guild total users
     // Gets all data points, if we have this for longer than 1000 days god help us
     const fluxQuery = `from(bucket: "stats-backend")
-  |> range(start: -1000d, stop: now())
+  |> range(start: -7d, stop: now())
   |> filter(fn: (r) =>
     r._measurement == "discord_metrics" and
     r._field == "guild_total_users" and
