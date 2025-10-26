@@ -1,0 +1,5 @@
+name = "predictions-atl-dev"
+compatibility_date = "2025-10-26"
+main = ".svelte-kit/cloudflare/_worker.js"
+assets = { directory = ".svelte-kit/cloudflare", binding = "ASSETS" }
+compatibility_flags = [ "nodejs_compat" ]
