@@ -1,9 +1,29 @@
-import { INFLUX_API_TOKEN, INFLUX_URL, INFLUX_ORG_ID } from '$env/static/private';
 import { parse } from 'csv-parse/sync';
 
-export async function influxDBRequest(): Promise<string> {
+interface InfluxConfig {
+  apiToken: string;
+  url: string;
+  orgId: string;
+}
+
+export async function influxDBRequest(config?: InfluxConfig): Promise<string> {
+  // If config is not provided, fall back to static env imports (for local dev)
+  let apiToken: string, url: string, orgId: string;
+  
+  if (config) {
+    apiToken = config.apiToken;
+    url = config.url;
+    orgId = config.orgId;
+  } else {
+    // Dynamic import for local development
+    const { INFLUX_API_TOKEN, INFLUX_URL, INFLUX_ORG_ID } = await import('$env/static/private');
+    apiToken = INFLUX_API_TOKEN;
+    url = INFLUX_URL;
+    orgId = INFLUX_ORG_ID;
+  }
+
   try {
-    const url = `${INFLUX_URL}/api/v2/query?orgID=${INFLUX_ORG_ID}`;
+    const queryUrl = `${url}/api/v2/query?orgID=${orgId}`;
 
     // Fixed Flux query for Discord guild total users
     // Gets all data points, if we have this for longer than 1000 days god help us
@@ -15,13 +35,13 @@ export async function influxDBRequest(): Promise<string> {
     r.server == "1172245377395728464"
   )`;
 
-    const response = await fetch(url, {
+    const response = await fetch(queryUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/vnd.flux',
         'User-Agent': 'insomnium/0.2.3-a',
         Accept: 'application/csv',
-        Authorization: `Token ${INFLUX_API_TOKEN}`
+        Authorization: `Token ${apiToken}`
       },
       body: fluxQuery
     });
