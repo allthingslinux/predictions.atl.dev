@@ -3,3 +3,6 @@ compatibility_date = "2025-10-26"
 main = ".svelte-kit/cloudflare/_worker.js"
 assets = { directory = ".svelte-kit/cloudflare", binding = "ASSETS" }
 compatibility_flags = [ "nodejs_compat" ]
+
+# Note: Environment variables are configured as secrets in Cloudflare dashboard
+# They should be automatically available in the worker environment

@@ -1,3 +1,4 @@
+import { INFLUX_API_TOKEN, INFLUX_URL, INFLUX_ORG_ID } from '$env/static/private';
 import { parse } from 'csv-parse/sync';
 
 interface InfluxConfig {
@@ -7,19 +8,14 @@ interface InfluxConfig {
 }
 
 export async function influxDBRequest(config?: InfluxConfig): Promise<string> {
-  // If config is not provided, fall back to static env imports (for local dev)
-  let apiToken: string, url: string, orgId: string;
-  
-  if (config) {
-    apiToken = config.apiToken;
-    url = config.url;
-    orgId = config.orgId;
-  } else {
-    // Dynamic import for local development
-    const { INFLUX_API_TOKEN, INFLUX_URL, INFLUX_ORG_ID } = await import('$env/static/private');
-    apiToken = INFLUX_API_TOKEN;
-    url = INFLUX_URL;
-    orgId = INFLUX_ORG_ID;
+  // Use provided config or fall back to environment variables
+  const apiToken = config?.apiToken || INFLUX_API_TOKEN;
+  const url = config?.url || INFLUX_URL;
+  const orgId = config?.orgId || INFLUX_ORG_ID;
+
+  // Validate we have all required values
+  if (!apiToken || !url || !orgId) {
+    throw new Error(`Missing required environment variables. API Token: ${!!apiToken}, URL: ${!!url}, Org ID: ${!!orgId}`);
   }
 
   try {

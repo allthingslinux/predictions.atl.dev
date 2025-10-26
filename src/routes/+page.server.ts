@@ -6,23 +6,9 @@ import {
 import { predictDiscordGrowth } from '$lib/server/predictionModeling';
 import type { PageServerLoad } from './$types';
 
-export const load = (async ({ platform }) => {
+export const load = (async () => {
   try {
-    let rawResponse: string;
-    
-    // Check if we're running on Cloudflare (platform.env exists)
-    if (platform?.env) {
-      // Running on Cloudflare Workers - use platform.env
-      rawResponse = await influxDBRequest({
-        apiToken: platform.env.INFLUX_API_TOKEN,
-        url: platform.env.INFLUX_URL,
-        orgId: platform.env.INFLUX_ORG_ID
-      });
-    } else {
-      // Running locally - use default behavior (static imports)
-      rawResponse = await influxDBRequest();
-    }
-    
+    const rawResponse = await influxDBRequest();
     const parsedData = averageDataIntervals(parseInfluxResponse(rawResponse), 60);
 
     // Generate predictions for the next 90 days
