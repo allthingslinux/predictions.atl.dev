@@ -113,6 +113,11 @@
         }
       }
 
+      // mobile detection for chart options (small, local change; keeps desktop unchanged)
+      const isMobile =
+        typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches;
+      const pointHoverRadius = isMobile ? 6 : 16;
+
       if (!discordStats.success || discordStats.data.length === 0) return;
 
       // Initialize charts
@@ -128,7 +133,7 @@
               fill: true,
               tension: 0.2,
               pointRadius: 1,
-              pointHoverRadius: 16,
+              pointHoverRadius,
               borderWidth: 3
             }
           ]
@@ -210,7 +215,7 @@
               fill: false,
               tension: 0.2,
               pointRadius: 1,
-              pointHoverRadius: 16,
+              pointHoverRadius,
               borderWidth: 3
             },
             {
@@ -222,7 +227,7 @@
               fill: false,
               tension: 0,
               pointRadius: 1,
-              pointHoverRadius: 16,
+              pointHoverRadius,
               borderWidth: 2
             }
           ]
@@ -295,133 +300,133 @@
     </div>
   {:else}
     <!-- Stats summary -->
-    <div class="mb-6 grid grid-cols-5 gap-4 text-center">
-      <div class="rounded bg-blue-50 p-4 shadow">
-        <h3 class="text-xs font-semibold text-blue-500 uppercase">Current Users</h3>
-        <p class="text-2xl font-bold">{discordStats.data[discordStats.data.length - 1].value}</p>
-      </div>
-      <div class="rounded bg-green-50 p-4 shadow">
-        <h3 class="text-xs font-semibold text-green-500 uppercase">Daily Growth</h3>
-        <p class="text-2xl font-bold">{formatPercent(growthRate)}</p>
-      </div>
-      <div class="rounded bg-purple-50 p-4 shadow">
-        <h3 class="text-xs font-semibold text-purple-500 uppercase">Accuracy (R²)*</h3>
-        <p class="text-2xl font-bold">{formatPercent(modelFit.rSquared)}</p>
-      </div>
-      <div class="rounded bg-yellow-50 p-4 shadow">
-        <h3 class="text-xs font-semibold text-yellow-500 uppercase">Milestones</h3>
-        <p class="text-2xl font-bold">
-          {milestones.length} milestone{milestones.length > 1 ? 's' : ''}
-        </p>
-      </div>
-      {#if milestoneDates.length > 0}
-        <div class="rounded bg-orange-50 p-4 shadow">
-          <h3 class="text-xs font-semibold text-orange-500 uppercase">Milestone Time</h3>
-          <p class="text-2xl font-bold">
-            {milestoneDates[0].daysFromNow} days
-          </p>
-        </div>
-      {/if}
-    </div>
+    <div class="mb-6 grid grid-cols-2 sm:grid-cols-5 gap-4 text-center">
+       <div class="rounded bg-blue-50 p-4 shadow">
+         <h3 class="text-xs font-semibold text-blue-500 uppercase">Current Users</h3>
+         <p class="text-xl sm:text-2xl font-bold">{discordStats.data[discordStats.data.length - 1].value}</p>
+       </div>
+       <div class="rounded bg-green-50 p-4 shadow">
+         <h3 class="text-xs font-semibold text-green-500 uppercase">Daily Growth</h3>
+         <p class="text-xl sm:text-2xl font-bold">{formatPercent(growthRate)}</p>
+       </div>
+       <div class="rounded bg-purple-50 p-4 shadow">
+         <h3 class="text-xs font-semibold text-purple-500 uppercase">Accuracy (R²)*</h3>
+         <p class="text-xl sm:text-2xl font-bold">{formatPercent(modelFit.rSquared)}</p>
+       </div>
+       <div class="rounded bg-yellow-50 p-4 shadow">
+         <h3 class="text-xs font-semibold text-yellow-500 uppercase">Milestones</h3>
+         <p class="text-xl sm:text-2xl font-bold">
+           {milestones.length} milestone{milestones.length > 1 ? 's' : ''}
+         </p>
+       </div>
+       {#if milestoneDates.length > 0}
+         <div class="rounded bg-orange-50 p-4 shadow">
+           <h3 class="text-xs font-semibold text-orange-500 uppercase">Milestone Time</h3>
+           <p class="text-xl sm:text-2xl font-bold">
+             {milestoneDates[0].daysFromNow} days
+           </p>
+         </div>
+       {/if}
+     </div>
 
-    <!-- Charts - side by side on larger screens -->
-    <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-      <div class="rounded-lg bg-white p-5 shadow">
-        <div class="h-72">
-          <canvas bind:this={historicalChartCanvas}></canvas>
-        </div>
-      </div>
-      <div class="rounded-lg bg-white p-5 shadow">
-        <div class="h-72">
-          <canvas bind:this={combinedChartCanvas}></canvas>
-        </div>
-      </div>
-    </div>
+     <!-- Charts - side by side on larger screens -->
+     <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+       <div class="rounded-lg bg-white p-5 shadow">
+         <div class="h-48 sm:h-72">
+           <canvas bind:this={historicalChartCanvas}></canvas>
+         </div>
+       </div>
+       <div class="rounded-lg bg-white p-5 shadow">
+         <div class="h-48 sm:h-72">
+           <canvas bind:this={combinedChartCanvas}></canvas>
+         </div>
+       </div>
+     </div>
 
-    <!-- Milestones section -->
-    {#if milestoneDates.length > 0}
-      <div class="mb-6 rounded-lg bg-yellow-50 p-5 shadow">
-        <h2 class="mb-3 text-xl font-bold">Upcoming Milestones</h2>
-        <div class="flex flex-wrap gap-4">
-          {#each milestoneDates as milestone}
-            <div class="rounded bg-white p-4 shadow">
-              <div class="text-lg font-semibold text-amber-600">{milestone.title}</div>
-              <div class="text-base">
+     <!-- Milestones section -->
+     {#if milestoneDates.length > 0}
+       <div class="mb-6 rounded-lg bg-yellow-50 p-5 shadow">
+         <h2 class="mb-3 text-xl font-bold">Upcoming Milestones</h2>
+         <div class="flex flex-wrap gap-4">
+           {#each milestoneDates as milestone}
+             <div class="rounded bg-white p-4 shadow">
+              <div class="text-base sm:text-lg font-semibold text-amber-600">{milestone.title}</div>
+              <div class="text-sm sm:text-base">
                 ~{formatPredictionDate(milestone.date)}
-                <span class="text-gray-500">({milestone.daysFromNow} days)</span>
-              </div>
-            </div>
-          {/each}
-        </div>
-      </div>
-    {/if}
+                 <span class="text-gray-500">({milestone.daysFromNow} days)</span>
+               </div>
+             </div>
+           {/each}
+         </div>
+       </div>
+     {/if}
 
-    <!-- Prediction Summary -->
-    <div class="mb-6 rounded-lg bg-white p-5 shadow">
-      <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-        <div>
-          <h3 class="mb-2 text-base font-semibold text-gray-700">Current Status</h3>
-          <p class="text-base">
-            Current Users: <span class="font-bold"
-              >{discordStats.data[discordStats.data.length - 1].value}</span
-            >
-          </p>
-          <p class="text-base">
-            Historical Period: <span class="font-bold">{historicalPeriod} days</span>
-          </p>
-          <p class="text-base">
-            Data Points: <span class="font-bold">{discordStats.data.length} measurements</span>
-          </p>
-          <p class="text-base">
-            Peak: <span class="font-bold">{maxValue}</span>
-          </p>
-        </div>
-        <div>
-          <h3 class="mb-2 text-base font-semibold text-gray-700">Growth Projections</h3>
-          {#if predictions.length > 0}
-            <p class="text-base">
-              7 days: <span class="font-bold">{predictions[weekIndex]?.value || 'N/A'}</span>
-              <span class="ml-2 text-sm text-green-600">
-                (+{formatPercent(
-                  predictions[weekIndex].value /
-                    discordStats.data[discordStats.data.length - 1].value -
-                    1
-                )})
-              </span>
-            </p>
-            <p class="text-base">
-              {predictionDays} days:
-              <span class="font-bold">{predictions[endIndex]?.value || 'N/A'}</span>
-              <span class="ml-2 text-sm text-green-600">
-                (+{formatPercent(
-                  predictions[endIndex].value /
-                    discordStats.data[discordStats.data.length - 1].value -
-                    1
-                )})
-              </span>
-            </p>
-          {/if}
-        </div>
-      </div>
-    </div>
+     <!-- Prediction Summary -->
+     <div class="mb-6 rounded-lg bg-white p-5 shadow">
+       <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+         <div>
+           <h3 class="mb-2 text-base font-semibold text-gray-700">Current Status</h3>
+           <p class="text-base">
+             Current Users: <span class="font-bold"
+               >{discordStats.data[discordStats.data.length - 1].value}</span
+             >
+           </p>
+           <p class="text-base">
+             Historical Period: <span class="font-bold">{historicalPeriod} days</span>
+           </p>
+           <p class="text-base">
+             Data Points: <span class="font-bold">{discordStats.data.length} measurements</span>
+           </p>
+           <p class="text-base">
+             Peak: <span class="font-bold">{maxValue}</span>
+           </p>
+         </div>
+         <div>
+           <h3 class="mb-2 text-base font-semibold text-gray-700">Growth Projections</h3>
+           {#if predictions.length > 0}
+             <p class="text-base">
+               7 days: <span class="font-bold">{predictions[weekIndex]?.value || 'N/A'}</span>
+               <span class="ml-2 text-sm text-green-600">
+                 (+{formatPercent(
+                   predictions[weekIndex].value /
+                     discordStats.data[discordStats.data.length - 1].value -
+                     1
+                 )})
+               </span>
+             </p>
+             <p class="text-base">
+               {predictionDays} days:
+               <span class="font-bold">{predictions[endIndex]?.value || 'N/A'}</span>
+               <span class="ml-2 text-sm text-green-600">
+                 (+{formatPercent(
+                   predictions[endIndex].value /
+                     discordStats.data[discordStats.data.length - 1].value -
+                     1
+                 )})
+               </span>
+             </p>
+           {/if}
+         </div>
+       </div>
+     </div>
 
-    <!-- API Endpoints Schema -->
-    <div class="mb-6 rounded-lg bg-gray-50 p-5 shadow">
-      <h2 class="mb-2 text-xl font-bold">API Endpoints</h2>
-      <ul class="list-disc list-inside text-sm text-gray-700">
-        <li><code>GET /api/members</code>: &#123; success: boolean, data: Array&#60;&#123; date: string, value: number &#125;&#62; &#125;</li>
-        <li><code>GET /api/predictions?days=&lt;number&gt;</code>: &#123; success: boolean, currentUsers: number, predictions: Array&#60;&#123; date: string, value: number &#125;&#62;, modelFit: &#123; rSquared: number, slope: number, intercept: number &#125;, dailyGrowthRate: number &#125;</li>
-        <li><code>GET /api/info</code>: &#123; success: boolean, data: &#123; message: string, timestamp: string &#125; &#125;</li>
-      </ul>
-    </div>
+     <!-- API Endpoints Schema -->
+     <div class="mb-6 rounded-lg bg-gray-50 p-5 shadow">
+       <h2 class="mb-2 text-xl font-bold">API Endpoints</h2>
+       <ul class="list-disc list-inside text-sm text-gray-700">
+         <li><code>GET /api/members</code>: &#123; success: boolean, data: Array&#60;&#123; date: string, value: number &#125;&#62; &#125;</li>
+         <li><code>GET /api/predictions?days=&lt;number&gt;</code>: &#123; success: boolean, currentUsers: number, predictions: Array&#60;&#123; date: string, value: number &#125;&#62;, modelFit: &#123; rSquared: number, slope: number, intercept: number &#125;, dailyGrowthRate: number &#125;</li>
+         <li><code>GET /api/info</code>: &#123; success: boolean, data: &#123; message: string, timestamp: string &#125; &#125;</li>
+       </ul>
+     </div>
 
-    <!-- Small methodology note -->
-    <div class="text-sm text-gray-500">
-      Sponsored by accuratelinuxgraphs.<br />
-      *Based on weighted log-linear regression (R²: {formatPercent(modelFit.rSquared)}).
-      accuratelinuxgraphs does not guarantee 100% accuracy or even 50% accuracy due to external
-      factors affecting Discord user growth.<br />TLDR: Not our fault if this is wrong. If you still
-      think its our fault, thats something you can learn to grow on! Sparkle on!
-    </div>
-  {/if}
-</div>
+     <!-- Small methodology note -->
+     <div class="text-sm text-gray-500">
+       Sponsored by accuratelinuxgraphs.<br />
+       *Based on weighted log-linear regression (R²: {formatPercent(modelFit.rSquared)}).
+       accuratelinuxgraphs does not guarantee 100% accuracy or even 50% accuracy due to external
+       factors affecting Discord user growth.<br />TLDR: Not our fault if this is wrong. If you still
+       think its our fault, thats something you can learn to grow on! Sparkle on!
+     </div>
+   {/if}
+ </div>
